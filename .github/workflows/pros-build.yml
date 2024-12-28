@@ -57,6 +57,6 @@ jobs:
             version="${version_core}+${build_id}"
           fi
 
-          echo "version_core=${version_core}" >> $GITHUB_OUTPUT
-          echo "library_name=${library_name}" >> $GITHUB_OUTPUT
-          echo "version=${version}" >> $GITHUB_OUTPUT
+          echo "version_core=${version_core}" | tee -a $GITHUB_OUTPUT
+          echo "library_name=${library_name}" | tee -a $GITHUB_OUTPUT
+          echo "version=${version}" | tee -a $GITHUB_OUTPUT
