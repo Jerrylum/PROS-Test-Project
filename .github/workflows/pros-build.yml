@@ -14,10 +14,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Show GitHub context 2
+      - name: Show GitHub context
         env:
           GITHUB_CONTEXT: ${{ toJson(github) }}
         run: echo "$GITHUB_CONTEXT"
+
       - name: Determine build type
         id: build-type
         run: |
@@ -30,6 +31,14 @@ jobs:
           echo "GITHUB_EVENT_NUMBER: $GITHUB_EVENT_NUMBER"
           echo "GITHUB_EVENT_HEAD_SHA: ${{ github.event.pull_request.head.sha }}"
           echo "GITHUB_EVENT_HEAD_SHA: $GITHUB_EVENT_PULL_REQUEST_HEAD_SHA"
+
+          # make build identifier, by head sha if it is not empty, or $GITHUB_SHA
+          if [[ -n "${{ github.event.pull_request.head.sha }}" ]]; then
+            SHA="${{ github.event.pull_request.head.sha }}"
+          else
+            SHA="${GITHUB_SHA}"
+          fi
+          echo "build_id=${SHA:0:6}" | tee -a $GITHUB_OUTPUT
 
           if [[ $GITHUB_REF == refs/tags/* ]]; then
             echo "type=tag" | tee -a $GITHUB_OUTPUT
