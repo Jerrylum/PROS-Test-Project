@@ -88,6 +88,7 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
         with:
-          name: my-library123
-          path: "*@*.zip"
+          name: ${{ steps.build-info.outputs.library_name }}@${{ steps.build-info.outputs.version }}
+          path: ${{ steps.build-info.outputs.library_name }}@${{ steps.build-info.outputs.version }}
+          if-no-files-found: error
           retention-days: 89
