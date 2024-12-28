@@ -25,7 +25,6 @@ jobs:
       - name: Build information
         id: build-info
         run: |
-          # Use tee to write to the output file and stdout
           version_core=$(awk -F'=' '/^VERSION:=/{print $2}' Makefile)
           library_name=$(awk -F'=' '/^LIBNAME:=/{print $2}' Makefile)
 
@@ -57,6 +56,35 @@ jobs:
             version="${version_core}+${build_id}"
           fi
 
+          # Use tee to write to the output file and stdout
           echo "version_core=${version_core}" | tee -a $GITHUB_OUTPUT
           echo "library_name=${library_name}" | tee -a $GITHUB_OUTPUT
           echo "version=${version}" | tee -a $GITHUB_OUTPUT
+
+      - name: Install ARM Toolchain
+        uses: fiam/arm-none-eabi-gcc@v1
+        with:
+          release: "10-2020-q4"
+
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+
+      - name: Install PROS CLI
+        uses: BSFishy/pip-action@v1
+        with:
+          packages: pros-cli
+
+      - name: Print PROS CLI Version
+        run: pros --version
+
+      - name: Create template
+        run: pros make template VERSION=${{ steps.build-info.outputs.version }}
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: my-library123
+          path: "*@*.zip"
+          retention-days: 89
