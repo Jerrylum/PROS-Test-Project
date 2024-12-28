@@ -79,6 +79,9 @@ jobs:
       - name: Print PROS CLI Version
         run: pros --version
 
+      - name: Build
+        run: pros make all
+
       - name: Create template
         run: pros make template VERSION=${{ steps.build-info.outputs.version }}
 
