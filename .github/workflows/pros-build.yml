@@ -26,9 +26,10 @@ jobs:
         id: build-info
         run: |
           # Use tee to write to the output file and stdout
-          echo "version_core=$(awk -F'=' '/^VERSION:=/{print $2}' Makefile)" >> $GITHUB_OUTPUT
-          echo "library_name=$(awk -F'=' '/^LIBNAME:=/{print $2}' Makefile)" >> $GITHUB_OUTPUT
+          version_core=$(awk -F'=' '/^VERSION:=/{print $2}' Makefile)
+          library_name=$(awk -F'=' '/^LIBNAME:=/{print $2}' Makefile)
 
+          # If a new tag is pushed
           if [[ $GITHUB_REF == refs/tags/* ]]; then
             # Remove the 'v' prefix from the tag version
             tag_version="${GITHUB_REF#refs/tags/v}"
@@ -38,8 +39,8 @@ jobs:
               exit 1
             fi
 
-            # Set the version to the tag version
-            echo "version=${version_core}" | tee -a $GITHUB_OUTPUT
+            # Set the version to the version core without the 'v' prefix and the build identifier
+            version=${version_core}
           else
             # Obtain build identifier by head SHA if it is not empty; otherwise, use $GITHUB_SHA
             # $GITHUB_SHA might be the merge commit SHA, which is not preferred
@@ -50,8 +51,12 @@ jobs:
             else
               SHA="${GITHUB_SHA}"
             fi
-            echo "build_id=${SHA:0:6}" | tee -a $GITHUB_OUTPUT
+            build_id=${SHA:0:6}
 
             # Set the version to the tag version plus the build identifier
-            echo "version=${version_core}+${build_id}" | tee -a $GITHUB_OUTPUT
+            version="${version_core}+${build_id}"
           fi
+
+          echo "version_core=${version_core}" >> $GITHUB_OUTPUT
+          echo "library_name=${library_name}" >> $GITHUB_OUTPUT
+          echo "version=${version}" >> $GITHUB_OUTPUT
