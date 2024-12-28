@@ -19,43 +19,39 @@ jobs:
           GITHUB_CONTEXT: ${{ toJson(github) }}
         run: echo "$GITHUB_CONTEXT"
 
-      - name: Determine build type
-        id: build-type
-        run: |
-          # Using tee to write to the output file and stdout
-          echo "GITHUB_REF: $GITHUB_REF"
-          echo "GITHUB_EVENT_AFTER: $GITHUB_EVENT_AFTER"
-          echo "GITHUB_SHA: $GITHUB_SHA"
-          echo "GITHUB_EVENT_NAME: $GITHUB_EVENT_NAME"
-          echo "GITHUB_EVENT_ACTION: $GITHUB_EVENT_ACTION"
-          echo "GITHUB_EVENT_NUMBER: $GITHUB_EVENT_NUMBER"
-          echo "GITHUB_EVENT_HEAD_SHA: ${{ github.event.pull_request.head.sha }}"
-          echo "GITHUB_EVENT_HEAD_SHA: $GITHUB_EVENT_PULL_REQUEST_HEAD_SHA"
-
-          # make build identifier, by head sha if it is not empty, or $GITHUB_SHA
-          if [[ -n "${{ github.event.pull_request.head.sha }}" ]]; then
-            SHA="${{ github.event.pull_request.head.sha }}"
-          else
-            SHA="${GITHUB_SHA}"
-          fi
-          echo "build_id=${SHA:0:6}" | tee -a $GITHUB_OUTPUT
-
-          if [[ $GITHUB_REF == refs/tags/* ]]; then
-            echo "type=tag" | tee -a $GITHUB_OUTPUT
-            echo "version=${GITHUB_REF#refs/tags/v}" | tee -a $GITHUB_OUTPUT
-          elif [[ $GITHUB_REF == refs/pull/* ]]; then
-            echo "type=pr" | tee -a $GITHUB_OUTPUT
-            echo "pr_num=${GITHUB_REF#refs/pull/}" | tee -a $GITHUB_OUTPUT
-            echo "pr_num=${pr_num%/merge}" | tee -a $GITHUB_OUTPUT
-          else
-            echo "type=otherwise" | tee -a $GITHUB_OUTPUT
-          fi
-
       - name: Checkout
         uses: actions/checkout@v2.3.4
 
-      - name: Read project makefile
-        id: read-makefile
+      - name: Build information
+        id: build-info
         run: |
+          # Use tee to write to the output file and stdout
           echo "version_core=$(awk -F'=' '/^VERSION:=/{print $2}' Makefile)" >> $GITHUB_OUTPUT
           echo "library_name=$(awk -F'=' '/^LIBNAME:=/{print $2}' Makefile)" >> $GITHUB_OUTPUT
+
+          if [[ $GITHUB_REF == refs/tags/* ]]; then
+            # Remove the 'v' prefix from the tag version
+            tag_version="${GITHUB_REF#refs/tags/v}"
+            # Check if version_core is the same as tag_version; if not, fail
+            if [[ "${version_core}" != "${tag_version}" ]]; then
+              echo "The version in the Makefile does not match the pushed tag version: ${version_core} != ${tag_version}"
+              exit 1
+            fi
+
+            # Set the version to the tag version
+            echo "version=${version_core}" | tee -a $GITHUB_OUTPUT
+          else
+            # Obtain build identifier by head SHA if it is not empty; otherwise, use $GITHUB_SHA
+            # $GITHUB_SHA might be the merge commit SHA, which is not preferred
+            # See: https://stackoverflow.com/questions/68061051/get-commit-sha-in-github-actions
+            # This should also work for forked pull requests
+            if [[ -n "${{ github.event.pull_request.head.sha }}" ]]; then
+              SHA="${{ github.event.pull_request.head.sha }}"
+            else
+              SHA="${GITHUB_SHA}"
+            fi
+            echo "build_id=${SHA:0:6}" | tee -a $GITHUB_OUTPUT
+
+            # Set the version to the tag version plus the build identifier
+            echo "version=${version_core}+${build_id}" | tee -a $GITHUB_OUTPUT
+          fi
