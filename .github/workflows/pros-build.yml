@@ -90,7 +90,7 @@ jobs:
 
       - name: Install PROS CLI
         if: steps.cache-pip.outputs.cache-hit != 'true'
-        run: pip install pros-cli==${{ env.PROS_CLI_VERSION }}
+        run: pip install --user pros-cli==${{ env.PROS_CLI_VERSION }}
 
       - name: Print PROS CLI Version
         run: pros --version
