@@ -86,13 +86,15 @@ jobs:
       - name: Create template
         run: pros make template VERSION=${{ steps.build-info.outputs.version }}
 
+      # First unzip the artifact zip file to a directory with the same name as the artifact
       - name: Unzip Artifact
         run: unzip ${{ steps.build-info.outputs.artifact_name }}.zip -d ${{ steps.build-info.outputs.artifact_name }}
 
+      # Upload the artifact directory, GitHub Actions will zip it up again and upload it as an artifact
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ steps.build-info.outputs.artifact_name }}
-          path: ${{ steps.build-info.outputs.artifact_name }}.zip
+          path: ${{ steps.build-info.outputs.artifact_name }}
           if-no-files-found: error
           retention-days: 89
