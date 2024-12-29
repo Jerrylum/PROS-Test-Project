@@ -66,7 +66,25 @@ jobs:
           echo "version=${version}" | tee -a $GITHUB_OUTPUT
           echo "artifact_name=${artifact_name}" | tee -a $GITHUB_OUTPUT
 
-      - name: Download and Setup ARM Toolchain
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.9
+
+      - name: Cache ARM Toolchain and PROS CLI
+        id: cache-toolchain-and-pros-cli
+        uses: actions/cache@v4
+        with:
+          path: |
+            $HOME/gcc-arm-none-eabi/bin
+            $HOME/.local/lib/python3.9/site-packages
+            $HOME/.local/bin
+          key: toolchain-and-pros-cli-${{ runner.os }}-${{ runner.arch }}
+          restore-keys: |
+            toolchain-and-pros-cli-${{ runner.os }}-${{ runner.arch }}
+
+      - name: Install ARM Toolchain
+        if: steps.cache-toolchain-and-pros-cli.outputs.cache-hit != 'true'
         run: |
           wget --no-verbose https://developer.arm.com/-/media/Files/downloads/gnu-rm/10.3-2021.10/gcc-arm-none-eabi-10.3-2021.10-x86_64-linux.tar.bz2 -O /tmp/gcc-arm-none-eabi.tar.bz2
           mkdir -p $HOME/gcc-arm-none-eabi
@@ -74,30 +92,10 @@ jobs:
           echo "Adding ARM toolchain to PATH"
           echo "$HOME/gcc-arm-none-eabi/bin" >> $GITHUB_PATH
 
-      # This is a faster alternative to fiam/arm-none-eabi-gcc@v1
-      # - name: Install ARM Toolchain
-      #   uses: fiam/arm-none-eabi-gcc@v1
-      #   with:
-      #     release: "10.3-2021.10" # Same with purduesigbots/VOSS
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: 3.9
-
-      - name: Cache pip packages
-        id: cache-pip
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.local/lib/python3.9/site-packages
-            ~/.local/bin
-          key: pros-cli-${{ env.PROS_CLI_VERSION }}-${{ runner.os }}-${{ runner.arch }}
-          restore-keys: |
-            pros-cli-${{ env.PROS_CLI_VERSION }}-${{ runner.os }}-${{ runner.arch }}
+        # This is a faster alternative to fiam/arm-none-eabi-gcc@v1 and carlosperate/arm-none-eabi-gcc-action
 
       - name: Install PROS CLI
-        if: steps.cache-pip.outputs.cache-hit != 'true'
+        if: steps.cache-toolchain-and-pros-cli.outputs.cache-hit != 'true'
         run: pip install --user pros-cli==${{ env.PROS_CLI_VERSION }}
 
       - name: Print PROS CLI Version
