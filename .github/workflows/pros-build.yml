@@ -83,7 +83,7 @@ jobs:
             ${{ runner.os }}-pip-pros-cli
 
       - name: Install PROS CLI
-        run: pip install pros-cli@3.5.4
+        run: pip install pros-cli
 
       - name: Print PROS CLI Version
         run: pros --version
