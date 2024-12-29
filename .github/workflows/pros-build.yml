@@ -76,7 +76,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: |
-            ~/gcc-arm-none-eabi
+            ~/gcc-arm-none-eabi/bin
             ~/.local/lib/python3.9/site-packages
             ~/.local/bin
           key: toolchain-and-pros-cli-${{ runner.os }}-${{ runner.arch }}
@@ -91,17 +91,15 @@ jobs:
           echo "Adding ARM toolchain to PATH"
           echo "$HOME/gcc-arm-none-eabi/bin" >> $GITHUB_PATH
 
-      - name: Print ARM Toolchain Version
+      - name: Add ARM Toolchain Version to PATH
         run: |
           echo "$HOME/gcc-arm-none-eabi/bin" >> $GITHUB_PATH
-          arm-none-eabi-gcc --version
 
       - name: Install PROS CLI
         if: steps.cache-toolchain-and-pros-cli.outputs.cache-hit != 'true'
-        run: pip install --user pros-cli==${{ env.PROS_CLI_VERSION }}
-
-      - name: Print PROS CLI Version
-        run: pros --version
+        run: |
+          pip install --user pros-cli==${{ env.PROS_CLI_VERSION }}
+          pros --version
 
       - name: Build project
         run: pros make all
