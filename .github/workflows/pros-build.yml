@@ -23,7 +23,7 @@ jobs:
       - name: Cache ARM Toolchain
         uses: actions/cache@v4
         with:
-          path: $GITHUB_WORKSPACE/toolchain
+          path: ${{ github.workspace }}/toolchain
           key: pros-build-arm-none-eabi-toolchain
 
       - name: Build template
