@@ -69,9 +69,10 @@ jobs:
       - name: Download and Setup ARM Toolchain
         run: |
           wget --no-verbose https://developer.arm.com/-/media/Files/downloads/gnu-rm/10.3-2021.10/gcc-arm-none-eabi-10.3-2021.10-x86_64-linux.tar.bz2 -O /tmp/gcc-arm-none-eabi.tar.bz2
-          mkdir -p ~/gcc-arm-none-eabi
-          tar -xjf /tmp/gcc-arm-none-eabi.tar.bz2 -C ~/gcc-arm-none-eabi --strip-components=1
-          echo "~/gcc-arm-none-eabi/bin" >> $GITHUB_PATH
+          mkdir -p $HOME/gcc-arm-none-eabi
+          tar -xjf /tmp/gcc-arm-none-eabi.tar.bz2 -C $HOME/gcc-arm-none-eabi --strip-components=1
+          echo "Adding ARM toolchain to PATH"
+          echo "$HOME/gcc-arm-none-eabi/bin" >> $GITHUB_PATH
 
       # This is a faster alternative to fiam/arm-none-eabi-gcc@v1
       # - name: Install ARM Toolchain
