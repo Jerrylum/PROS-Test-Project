@@ -66,9 +66,16 @@ jobs:
           echo "version=${version}" | tee -a $GITHUB_OUTPUT
           echo "artifact_name=${artifact_name}" | tee -a $GITHUB_OUTPUT
 
+      - name: Download and Setup ARM Toolchain
+        run: |
+          wget https://developer.arm.com/-/media/Files/downloads/gnu-rm/10.3-2021.10/gcc-arm-none-eabi-10.3-2021.10-x86_64-linux.tar.bz2 -O /tmp/gcc-arm-none-eabi.tar.bz2
+          mkdir -p ~/gcc-arm-none-eabi
+          tar -xjf /tmp/gcc-arm-none-eabi.tar.bz2 -C ~/gcc-arm-none-eabi --strip-components=1
+          echo "~/gcc-arm-none-eabi/bin" >> $GITHUB_PATH
+
       # This is a faster alternative to fiam/arm-none-eabi-gcc@v1
       - name: Install ARM Toolchain
-        uses: carlosperate/arm-none-eabi-gcc-action@v1.8.1
+        uses: fiam/arm-none-eabi-gcc@v1
         with:
           release: "10.3-2021.10" # Same with purduesigbots/VOSS
 
