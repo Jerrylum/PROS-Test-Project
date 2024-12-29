@@ -86,6 +86,9 @@ jobs:
       - name: Create template
         run: pros make template VERSION=${{ steps.build-info.outputs.version }}
 
+      - name: Unzip Artifact
+        run: unzip ${{ steps.build-info.outputs.artifact_name }}.zip -d ${{ steps.build-info.outputs.artifact_name }}
+
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
