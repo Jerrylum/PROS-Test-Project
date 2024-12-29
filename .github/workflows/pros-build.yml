@@ -27,6 +27,4 @@ jobs:
 
       - name: Build template
         uses: jerrylum/pros-build@main
-        with:
-          who-to-greet: "My World"
 
