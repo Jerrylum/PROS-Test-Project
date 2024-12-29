@@ -76,13 +76,14 @@ jobs:
         uses: actions/cache@v4
         with:
           path: |
-            $HOME/gcc-arm-none-eabi/bin
-            $HOME/.local/lib/python3.9/site-packages
-            $HOME/.local/bin
+            ~/gcc-arm-none-eabi/bin
+            ~/.local/lib/python3.9/site-packages
+            ~/.local/bin
           key: toolchain-and-pros-cli-${{ runner.os }}-${{ runner.arch }}
           restore-keys: |
             toolchain-and-pros-cli-${{ runner.os }}-${{ runner.arch }}
 
+      # This is a faster alternative to fiam/arm-none-eabi-gcc@v1 and carlosperate/arm-none-eabi-gcc-action
       - name: Install ARM Toolchain
         if: steps.cache-toolchain-and-pros-cli.outputs.cache-hit != 'true'
         run: |
