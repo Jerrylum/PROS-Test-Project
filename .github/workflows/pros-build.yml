@@ -17,16 +17,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Show GitHub context
-        env:
-          GITHUB_CONTEXT: ${{ toJson(github) }}
-        run: |
-          echo "$GITHUB_CONTEXT"
-          echo "$GITHUB_PATH"
-
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Cache ARM Toolchain
+        uses: actions/cache@v4
+        with:
+          path: /arm-none-eabi-toolchain
+          key: pros-build-arm-none-eabi-toolchain
+
       - name: Build template
         uses: jerrylum/pros-build@main
-
