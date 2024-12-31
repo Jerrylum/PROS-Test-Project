@@ -21,6 +21,12 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Build template
+        id: build
         uses: jerrylum/pros-build@main
         with:
-          build_args: "quick template -j"
+          build_args: quick template -j
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.build.outputs.artifact_name }}
+          path: ${{ steps.build.outputs.artifact_path }}
