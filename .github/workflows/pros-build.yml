@@ -28,11 +28,9 @@ jobs:
 
       - name: Copy files to artifact directory
         run: |
-          ls -all ${{ steps.build.outputs.artifact_path }}
-          ls -all ${{ steps.build.outputs.artifact_path }}/include/my-library
-          # echo "${{ steps.build.outputs.version }}" >> ${{ env.INCLUDE_DIR }}/VERSION
-          sudo cp README.md ${{ env.INCLUDE_DIR }}
-          sudo cp LICENSE ${{ env.INCLUDE_DIR }}
+          sudo echo "${{ steps.build.outputs.version }}" >> ${{ env.INCLUDE_DIR }}/VERSION
+          sudo cp README.md "${{ env.INCLUDE_DIR }}"
+          sudo cp LICENSE "${{ env.INCLUDE_DIR }}"
         env:
           INCLUDE_DIR: ${{ steps.build.outputs.artifact_path }}/include/my-library
 
