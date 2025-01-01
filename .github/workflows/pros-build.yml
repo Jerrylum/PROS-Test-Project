@@ -30,7 +30,7 @@ jobs:
         run: |
           ls -all ${{ steps.build.outputs.artifact_path }}
           ls -all ${{ steps.build.outputs.artifact_path }}/include/my-library
-          echo "${{ steps.build.outputs.version }}" > ${{ env.INCLUDE_DIR }}/VERSION
+          # echo "${{ steps.build.outputs.version }}" > ${{ env.INCLUDE_DIR }}/VERSION
           cp README.md ${{ env.INCLUDE_DIR }}
           cp LICENSE ${{ env.INCLUDE_DIR }}
         env:
