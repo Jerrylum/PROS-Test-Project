@@ -3,7 +3,7 @@ const gh = github;
 /** @type {import('@actions/github').context} */
 const ctx = context;
 /** @type {import('@octokit/webhooks-types').WorkflowRun} */
-const run = ctx.payload.workflow_run;
+const run = ctx.payload.workflow_run; // a.k.a GitHub Event
 
 const { owner, repo } = ctx.repo;
 const run_id = run.id;
@@ -36,11 +36,22 @@ if (!artifacts.length)
   return core.error(`No artifacts found, perhaps Build Template was skipped`);
 const template = artifacts[0];
 
+const { data: head_commit } = await gh.rest.repos.getCommit({
+  owner,
+  repo,
+  ref: pull_head_sha,
+});
+
+const head_commit_message = head_commit.commit.message.split("\n")[0].replace(/`/, "");
+const head_commit_short_sha = head_commit.sha.slice(0, 7);
+const head_commit_date = head_commit.commit.committer.date;
+
 const insertion = `<!-- commit-sha: ${pull_head_sha} -->
 ## Download the template for this pull request:
 
 > [!NOTE]
-> This is auto generated from [${ctx.workflow}](${ctx.serverUrl}/${ctx.repo.repo}/actions/runs/${ctx.runId})
+> This is auto-generated from the last successful build commit [${head_commit_short_sha}](${head_commit.html_url}) on ${head_commit_date} which triggered [this workflow](${ctx.serverUrl}/${ctx.payload.repository?.full_name}/actions/runs/${ctx.runId}):
+> \`${head_commit_message}\`
 - via manual download: [${template.name}.zip](https://nightly.link/${owner}/${repo}/actions/artifacts/${template.id}.zip)
 - via PROS Integrated Terminal:
 \`\`\`
