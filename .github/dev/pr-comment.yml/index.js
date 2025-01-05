@@ -50,8 +50,8 @@ const insertion = `<!-- commit-sha: ${pull_head_sha} -->
 ## Download the template for this pull request:
 
 > [!NOTE]
-> This is auto-generated from the last successful build commit [${head_commit_short_sha}](${head_commit.html_url}) on ${head_commit_date} which triggered [this workflow](${ctx.serverUrl}/${ctx.payload.repository?.full_name}/actions/runs/${ctx.runId}):
-> \`${head_commit_message}\`
+> This is auto-generated from the last successful build commit [${head_commit_short_sha}](${head_commit.html_url}) on ${head_commit_date}.
+Commit message: \`${head_commit_message}\`
 - via manual download: [${template.name}.zip](https://nightly.link/${owner}/${repo}/actions/artifacts/${template.id}.zip)
 - via PROS Integrated Terminal:
 \`\`\`
