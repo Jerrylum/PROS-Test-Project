@@ -19,7 +19,7 @@ jobs:
 
       - name: Build template
         id: build
-        uses: jerrylum/pros-build@main
+        uses: jerrylum/pros-build@v1.0.0
         with:
           add_build_id: except_tag
           build_args: "quick template -j" # -j enables multi-threading
