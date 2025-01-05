@@ -51,7 +51,7 @@ const insertion = `<!-- commit-sha: ${pull_head_sha} -->
 
 > [!NOTE]
 > This is auto-generated from the last successful build commit [${head_commit_short_sha}](${head_commit.html_url}) on ${head_commit_date}.
-Commit message: \`${head_commit_message}\`
+> Commit message: \`${head_commit_message}\`
 - via manual download: [${template.name}.zip](https://nightly.link/${owner}/${repo}/actions/artifacts/${template.id}.zip)
 - via PROS Integrated Terminal:
 \`\`\`
