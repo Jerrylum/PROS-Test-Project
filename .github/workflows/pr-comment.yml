@@ -13,6 +13,13 @@ jobs:
 
     steps:
       - uses: actions/github-script@v6
+        # env:
+          # RUN_ID: ${{ github.event.workflow_run.id }}
+          # PULL_REQUESTS: ${{ toJSON(github.event.workflow_run.pull_requests) }}
+          # PULL_HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+          # WORKFLOW: ${{ github.workflow }}
+          # SERVER_URL: ${{ github.server_url }}
+          # REPOSITORY: ${{ github.repository }}
         with:
           # This snippet is public-domain, taken from
           # https://github.com/oprypin/nightly.link/blob/master/.github/workflows/pr-comment.yml
@@ -32,11 +39,11 @@ jobs:
             }
 
             const {owner, repo} = context.repo;
-            const run_id = ${{ github.event.workflow_run.id }};
+            const run_id = context.payload.workflow_run.id;
 
             const pull_head_sha = '${{ github.event.workflow_run.head_sha }}';
 
-            const pull_requests = ${{ toJSON(github.event.workflow_run.pull_requests) }};
+            const pull_requests = JSON.parse(PULL_REQUESTS);
             if (!pull_requests.length) return core.error("This workflow doesn't match any pull requests!");
             const pull_number = pull_requests[0].number;
             // Get full PR details including body
