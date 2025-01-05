@@ -28,29 +28,26 @@ jobs:
             }
 
             const {owner, repo} = context.repo;
-            const run_id = ${{github.event.workflow_run.id}};
+            const run_id = ${{ github.event.workflow_run.id }};
 
-            const pull_head_sha = '${{github.event.workflow_run.head_sha}}';
+            const pull_head_sha = '${{ github.event.workflow_run.head_sha }}';
 
             const pull_requests = ${{ toJSON(github.event.workflow_run.pull_requests) }};
-            if (!pull_requests.length) {
-              return core.error("This workflow doesn't match any pull requests!");
-            }
-            console.log(pull_requests);
-            const issue_number = pull_requests[0].number;
-            const old_body = pull_requests[0].body;
+            if (!pull_requests.length) return core.error("This workflow doesn't match any pull requests!");
+            const pull_number = pull_requests[0].number;
+            // Get full PR details including body
+            const { data: pullRequest } = await github.rest.pulls.get({ owner, repo, pull_number });
+            // The body might be null
+            const old_body = pullRequest.body || '';
 
-            let old_sha = /\<\!-- commit-sha: (?<sha>[a-z0-9]+) --\>/i.exec(old_body)?.groups?.sha
+            const old_sha = /\<\!-- commit-sha: (?<sha>[a-z0-9]+) --\>/i.exec(old_body)?.groups?.sha
             if (old_sha != undefined && pull_head_sha == old_sha) return core.error("Comment is already up-to-date!")
 
-            const artifacts = await github.paginate(
-              github.rest.actions.listWorkflowRunArtifacts, {owner, repo, run_id});
-            if (!artifacts.length) {
-              return core.error(`No artifacts found, perhaps Build Template was skipped`);
-            }
+            const artifacts = await github.paginate(github.rest.actions.listWorkflowRunArtifacts, {owner, repo, run_id});
+            if (!artifacts.length) return core.error(`No artifacts found, perhaps Build Template was skipped`);
             const template = artifacts[0];
 
-            let insertion = `<!-- commit-sha: ${pull_head_sha} -->
+            const insertion = `<!-- commit-sha: ${pull_head_sha} -->
             ## Download the template for this pull request:
 
             > [!NOTE]
@@ -66,5 +63,5 @@ jobs:
 
             core.info(`Review thread message body: \n${insertion}`);
 
-            await upsertComment(owner, repo, issue_number,
+            await upsertComment(owner, repo, pull_number,
               "nightly-link", old_body, insertion);
