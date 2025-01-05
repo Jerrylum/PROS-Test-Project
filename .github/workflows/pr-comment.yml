@@ -43,7 +43,7 @@ jobs:
 
             const pull_head_sha = '${{ github.event.workflow_run.head_sha }}';
 
-            const pull_requests = JSON.parse(PULL_REQUESTS);
+            const pull_requests = ${{ github.event.workflow_run.pull_requests }};
             if (!pull_requests.length) return core.error("This workflow doesn't match any pull requests!");
             const pull_number = pull_requests[0].number;
             // Get full PR details including body
