@@ -36,6 +36,7 @@ jobs:
             if (!pull_requests.length) {
               return core.error("This workflow doesn't match any pull requests!");
             }
+            console.log(pull_requests);
             const issue_number = pull_requests[0].number;
             const old_body = pull_requests[0].body;
 
