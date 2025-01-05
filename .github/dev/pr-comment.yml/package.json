@@ -1,0 +1,16 @@
+{
+  "name": "pr-comment.yml",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "build": "node build.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@actions/github": "^6.0.0",
+    "@octokit/types": "^13.6.2",
+    "@octokit/webhooks-types": "^7.6.1"
+  }
+}
