@@ -15,5 +15,6 @@ jobs:
     steps:
       - uses: jerrylum/pros-depot@main
         with:
+          token: ${{ secrets.GITHUB_TOKEN }}
           target_branch: depot6
           target_path: stable.json
