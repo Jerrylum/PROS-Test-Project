@@ -13,8 +13,15 @@ jobs:
       # permits reading of releases and writing to the depot branch
       contents: write
     steps:
-      - uses: jerrylum/pros-depot@main
+      - name: Populate depot
+        uses: jerrylum/pros-depot@main
+        id: depot
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           target_branch: depot
           target_path: depot.json
+          push: false
+      - name: Print depot file
+        run: |
+          echo ${{ steps.depot.outputs.depot }} > depot.json
+          cat depot.json
