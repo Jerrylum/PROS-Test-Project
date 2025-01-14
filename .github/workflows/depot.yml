@@ -23,5 +23,7 @@ jobs:
           push: false
       - name: Print depot file
         run: |
-          echo ${{ steps.depot.outputs.depot }} > depot.json
+          echo ${{ env.depot }} > depot.json
           cat depot.json
+        env:
+          depot: ${{ steps.depot.outputs.depot }}
