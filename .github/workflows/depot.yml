@@ -23,7 +23,5 @@ jobs:
           push: false
       - name: Print depot file
         run: |
-          echo ${{ env.depot }} > depot.json
+          printf '%s\n' "${{ steps.depot.outputs.depot }}" > depot.json
           cat depot.json
-        env:
-          depot: ${{ steps.depot.outputs.depot }}
