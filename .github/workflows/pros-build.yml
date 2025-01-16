@@ -17,6 +17,22 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Build tests
+        id: build-tests
+        uses: jerrylum/pros-build@v2.0.0
+        with:
+          build_args: "all -j EXTRA_CXXFLAGS=-DUNIT_TEST" # -j enables multi-threading
+
+      - name: Run tests
+        id: run-tests
+        uses: jerrylum/vex-v5-qemu-gh-action@main
+
+      - name: Clean build results
+        id: clean-tests
+        uses: jerrylum/pros-build@v2.0.0
+        with:
+          build_args: "clean" # it might be necessary to clean the build results
+
       - name: Build template
         id: build
         uses: jerrylum/pros-build@v2.0.0
