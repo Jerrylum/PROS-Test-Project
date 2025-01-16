@@ -30,7 +30,7 @@ jobs:
 
       - name: Check for failed tests
         run: |
-          grep_result=$(grep "\[.*FAILED.*\]" "${{ steps.run-tests.outputs.output }}" || true)
+          grep_result=$(grep -a "\[.*FAILED.*\]" "${{ steps.run-tests.outputs.output }}" || true)
           if [ ! -z "$grep_result" ]; then
             cat "${{ steps.run-tests.outputs.output }}"
             echo "Tests failed"
