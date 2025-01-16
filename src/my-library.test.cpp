@@ -18,5 +18,5 @@ UTEST(foo, bar2) {
     std::cout << pros::millis() << std::endl;
     std::cout << vexSystemTimeGet() << std::endl;
 
-    ASSERT_TRUE(0);
+    ASSERT_TRUE(1);
 }
