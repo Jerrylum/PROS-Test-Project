@@ -2,21 +2,13 @@
 #include "utest.h"
 
 UTEST(foo, bar) {
-    std::cout << pros::millis() << std::endl;
-    std::cout << vexSystemTimeGet() << std::endl;
     pros::delay(1000);
-    std::cout << pros::millis() << std::endl;
-    std::cout << vexSystemTimeGet() << std::endl;
 
     ASSERT_TRUE(1);
 }
 
 UTEST(foo, bar2) {
-    std::cout << pros::millis() << std::endl;
-    std::cout << vexSystemTimeGet() << std::endl;
-    pros::delay(1000);
-    std::cout << pros::millis() << std::endl;
-    std::cout << vexSystemTimeGet() << std::endl;
+    pros::delay(300);
 
-    ASSERT_TRUE(1);
+    ASSERT_TRUE(0);
 }
