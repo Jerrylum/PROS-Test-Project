@@ -28,8 +28,14 @@ jobs:
         timeout-minutes: 1
         uses: jerrylum/vex-v5-qemu-gh-action@main
 
+      - name: Check for failed tests
+        run: |
+          if echo "${{ steps.run-tests.outputs.output }}" | grep -q "[  FAILED  ]"; then
+            echo "Tests failed"
+            exit 1
+          fi
+
       - name: Clean build results
-        id: clean-tests
         uses: jerrylum/pros-build@v2.0.0
         with:
           build_args: "clean" # it might be necessary to clean the build results
