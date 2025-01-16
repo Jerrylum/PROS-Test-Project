@@ -25,6 +25,7 @@ jobs:
 
       - name: Run tests
         id: run-tests
+        timeout-minutes: 1
         uses: jerrylum/vex-v5-qemu-gh-action@main
 
       - name: Clean build results
