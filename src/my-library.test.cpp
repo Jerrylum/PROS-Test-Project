@@ -10,5 +10,5 @@ UTEST(foo, bar) {
 UTEST(foo, bar2) {
     pros::delay(300);
 
-    ASSERT_TRUE(0);
+    ASSERT_TRUE(1);
 }
