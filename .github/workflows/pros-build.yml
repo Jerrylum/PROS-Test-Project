@@ -30,6 +30,7 @@ jobs:
 
       - name: Check for failed tests
         run: |
+          cat "${{ steps.run-tests.outputs.output }}"
           if grep -q "[  FAILED  ]" "${{ steps.run-tests.outputs.output }}"; then
             echo "Tests failed"
             exit 1
